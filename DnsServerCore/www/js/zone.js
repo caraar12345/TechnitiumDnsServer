@@ -652,6 +652,8 @@ function refreshZones(checkDisplay, pageNumber) {
             return;
     }
 
+    navSyncDrillOut("zones");
+
     if (pageNumber == null) {
         pageNumber = $("#txtZonesPageNumber").val();
         if (pageNumber == "")
@@ -3430,6 +3432,8 @@ function showEditZone(zone, showPageNumber, zoneFilterName, zoneFilterType) {
 
             divViewZonesLoader.hide();
             divEditZone.show();
+
+            navRecordDrill("zones", zone);
         },
         error: function () {
             divViewZonesLoader.hide();
