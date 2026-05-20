@@ -203,7 +203,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         var sectionKey = subSlug ? mainSlug + "/" + subSlug : mainSlug;
         var drill = DRILL[sectionKey];
         var isEdit = drill && parts[detailIndex] === EDIT_SEGMENT && parts[detailIndex + 1];
-        var editName = isEdit ? decodeURIComponent(parts[detailIndex + 1]) : "";
+        var editName = "";
+        if (isEdit) {
+            try {
+                editName = decodeURIComponent(parts[detailIndex + 1]);
+            }
+            catch (ex) {
+                return false; //malformed percent-escape in a user-controlled hash
+            }
+        }
 
         isRestoring = true;
         try {
@@ -214,8 +222,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     return slugFromControls($(this).attr("aria-controls")) === subSlug;
                 }).first();
 
-                if (isShown(subAnchor.parent("li")))
-                    activateTab(subAnchor, !isEdit);
+                if (!isShown(subAnchor.parent("li")))
+                    return false;
+
+                activateTab(subAnchor, !isEdit);
             }
 
             if (drill) {
@@ -236,8 +246,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         if (!route)
             route = getDefaultRoute();
 
-        if (route)
-            applyRoute(route);
+        if (!route)
+            return;
+
+        // If the target route is no longer reachable (hidden/removed), the UI
+        // stays as-is; resync the URL to what's actually shown so the address
+        // bar doesn't lie about the current view.
+        if (!applyRoute(route)) {
+            var fallback = getCurrentRoute() || getDefaultRoute();
+            window.history.replaceState({ route: fallback }, "", routeToHash(fallback));
+        }
     }
 
     function onTabShown(e) {
