@@ -213,6 +213,8 @@ function refreshDhcpScopes(checkDisplay) {
     if (checkDisplay && (divDhcpEditScope.css("display") != "none"))
         return;
 
+    navSyncDrillOut("dhcp/scopes");
+
     var node = $("#optDhcpClusterNode").val();
     $("#optDhcpClusterNode").prop("disabled", false);
 
@@ -480,6 +482,8 @@ function showEditDhcpScope(scopeName) {
 
             divDhcpViewScopesLoader.hide();
             divDhcpEditScope.show();
+
+            navRecordDrill("dhcp/scopes", scopeName);
         },
         invalidToken: function () {
             showPageLogin();
