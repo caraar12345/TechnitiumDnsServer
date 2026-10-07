@@ -23,11 +23,18 @@ var otpTimerHandle = null;
 
 $(function () {
     var hash = window.location.hash;
+    var navRoute = "";
+
+    if (hash.indexOf("#!/") === 0) {
+        navRoute = hash; //preserve in-app navigation route so it can be restored after login
+        hash = "";
+    }
+
     if (hash.length > 0)
         hash = "?" + hash.substr(1);
 
     var urlParams = new URLSearchParams(hash);
-    window.history.replaceState(null, '', window.location.protocol + "//" + window.location.host + window.location.pathname);
+    window.history.replaceState(null, '', window.location.protocol + "//" + window.location.host + window.location.pathname + navRoute);
 
     var errorMessage = urlParams.get("error");
     if (errorMessage != null) {
