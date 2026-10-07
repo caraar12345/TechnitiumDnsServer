@@ -247,6 +247,8 @@ function showPageMain() {
 
     $("#pageMain").show();
 
+    navOnPageMain();
+
     checkForUpdate();
 
     refreshTimerHandle = setInterval(function () {
